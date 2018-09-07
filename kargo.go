@@ -8,7 +8,8 @@ import (
 
 // CarrierFactory handles the validation of tracking number for carrier
 type CarrierFactory interface {
-	Validate(*Package) bool
+	Validate() bool
+	GetPackage() *Package
 }
 
 // Package is the base struct of all carriers
@@ -16,6 +17,15 @@ type Package struct {
 	Carrier        string
 	TrackingNumber string
 	IsValid        bool
+}
+
+func NewPackage(trackingNumber string) (*Package, error) {
+	if len(trackingNumber) == 0 {
+		return nil, errors.New("Tracking Number can not be empty!")
+	}
+	t := strings.TrimSpace(stripSpaces(trackingNumber))
+
+	return &Package{TrackingNumber: t, IsValid: false}, nil
 }
 
 // Identify investigates the carriers and checks if
@@ -26,14 +36,15 @@ func Identify(trackingNumber string) (*Package, error) {
 	}
 
 	t := strings.TrimSpace(stripSpaces(trackingNumber))
-	p := &Package{TrackingNumber: t}
-	carriers := []CarrierFactory{&UPS{}, &FedEx{}}
+
+	p, _ := NewPackage(t)
+	carriers := []CarrierFactory{NewUPS(p), NewFedExGround96(p), NewFedExExpress(p)}
 	for _, carrier := range carriers {
-		if carrier.Validate(p) {
-			return p, nil
+		if carrier.Validate() {
+			return carrier.GetPackage(), nil
 		}
 	}
-	return nil, errors.New("Tracking number could not be identified!")
+	return p, nil
 }
 
 func stripSpaces(str string) string {

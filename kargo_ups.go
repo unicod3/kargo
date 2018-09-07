@@ -4,13 +4,27 @@ import (
 	"strconv"
 )
 
+// UPS is a carrier that have package struct
 type UPS struct {
 	*Package
 }
 
-func (u *UPS) Validate(p *Package) bool {
-	chars := p.TrackingNumber[2 : len(p.TrackingNumber)-1]
-	checkDigit, err := strconv.Atoi(p.TrackingNumber[len(p.TrackingNumber)-1:])
+// NewUPS initialize a new UPS struct with package value
+func NewUPS(p *Package) *UPS {
+	return &UPS{Package: p}
+}
+
+// GetPackage Implements the CarrierFactory interface method
+// Returns the package that carrier holds
+func (u *UPS) GetPackage() *Package {
+	return u.Package
+}
+
+// Validate Implements the CarrierFactory interface method
+// Checks whether is a package belongs to that carrier
+func (u *UPS) Validate() bool {
+	chars := u.Package.TrackingNumber[2 : len(u.Package.TrackingNumber)-1]
+	checkDigit, err := strconv.Atoi(u.Package.TrackingNumber[len(u.Package.TrackingNumber)-1:])
 	if err != nil {
 		return false
 	}
@@ -42,7 +56,7 @@ func (u *UPS) Validate(p *Package) bool {
 		return false
 	}
 
-	p.Carrier = "UPS"
-	p.IsValid = true
+	u.Package.Carrier = "UPS"
+	u.Package.IsValid = true
 	return true
 }
