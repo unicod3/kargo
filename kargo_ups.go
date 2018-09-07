@@ -9,6 +9,11 @@ type UPS struct {
 	*Package
 }
 
+// GetCarrierName retuns the name of carrier struct with package value
+func (u *UPS) GetCarrierName() string {
+	return "UPS"
+}
+
 // NewUPS initialize a new UPS struct with package value
 func NewUPS(p *Package) *UPS {
 	return &UPS{Package: p}
@@ -56,7 +61,7 @@ func (u *UPS) Validate() bool {
 		return false
 	}
 
-	u.Package.Carrier = "UPS"
+	u.Package.Carrier = u.GetCarrierName()
 	u.Package.IsValid = true
 	return true
 }

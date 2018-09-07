@@ -8,8 +8,9 @@ import (
 
 // CarrierFactory handles the validation of tracking number for carrier
 type CarrierFactory interface {
-	Validate() bool
+	GetCarrierName() string
 	GetPackage() *Package
+	Validate() bool
 }
 
 // Package is the base struct of all carriers
@@ -19,6 +20,7 @@ type Package struct {
 	IsValid        bool
 }
 
+// NewPackage initializes a new Package struct with a Tracking Number value
 func NewPackage(trackingNumber string) (*Package, error) {
 	if len(trackingNumber) == 0 {
 		return nil, errors.New("Tracking Number can not be empty!")
@@ -47,6 +49,7 @@ func Identify(trackingNumber string) (*Package, error) {
 	return p, nil
 }
 
+//stripSpaces removes strips from given string
 func stripSpaces(str string) string {
 	return strings.Map(func(r rune) rune {
 		if unicode.IsSpace(r) {
