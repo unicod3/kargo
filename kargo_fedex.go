@@ -5,6 +5,6 @@ type FedEx struct {
 }
 
 func (f *FedEx) Validate(p *Package) bool {
-	p.Carrier = "Fedex"
-	return true
+	//p.Carrier = "Fedex"
+	return false
 }

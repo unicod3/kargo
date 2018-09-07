@@ -1,6 +1,10 @@
 package kargo
 
-import "errors"
+import (
+	"errors"
+	"strings"
+	"unicode"
+)
 
 // CarrierFactory handles the validation of tracking number for carrier
 type CarrierFactory interface {
@@ -11,6 +15,7 @@ type CarrierFactory interface {
 type Package struct {
 	Carrier        string
 	TrackingNumber string
+	IsValid        bool
 }
 
 // Identify investigates the carriers and checks if
@@ -20,7 +25,8 @@ func Identify(trackingNumber string) (*Package, error) {
 		return nil, errors.New("Tracking Number can not be empty!")
 	}
 
-	p := &Package{TrackingNumber: trackingNumber}
+	t := strings.TrimSpace(stripSpaces(trackingNumber))
+	p := &Package{TrackingNumber: t}
 	carriers := []CarrierFactory{&UPS{}, &FedEx{}}
 	for _, carrier := range carriers {
 		if carrier.Validate(p) {
@@ -28,4 +34,15 @@ func Identify(trackingNumber string) (*Package, error) {
 		}
 	}
 	return nil, errors.New("Tracking number could not be identified!")
+}
+
+func stripSpaces(str string) string {
+	return strings.Map(func(r rune) rune {
+		if unicode.IsSpace(r) {
+			// if the character is a space, drop it
+			return -1
+		}
+		// else keep it in the string
+		return r
+	}, str)
 }
