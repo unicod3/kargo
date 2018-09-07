@@ -7,24 +7,38 @@ import (
 
 func TestUPSTrackingNumber(t *testing.T) {
 	expectedValue := "1Z999AA10123456784"
-	result, _ := kargo.Identify(expectedValue)
 
-	if result.TrackingNumber != expectedValue {
-		t.Errorf("Tracking Number is wrong, got: %s, want: %s.", result.TrackingNumber, expectedValue)
+	p, _ := kargo.NewPackage(expectedValue)
+	ups := kargo.NewUPS(p)
+
+	if ups.Package.TrackingNumber != expectedValue {
+		t.Errorf("got: %s, want: %s.", ups.Package.TrackingNumber, expectedValue)
 	}
 }
-
 func TestUPSTrackingNumberWithSpaces(t *testing.T) {
 	expectedValue := "1Z999AA10123456784"
-	result, _ := kargo.Identify("1Z9  99AA1012  345678 4")
-	if result.TrackingNumber != expectedValue {
-		t.Errorf("Tracking Number is wrong, got: %s, want: %s.", result.TrackingNumber, expectedValue)
+
+	p, _ := kargo.NewPackage("1Z9  99AA1012  345678 4")
+	ups := kargo.NewUPS(p)
+
+	if ups.Package.TrackingNumber != expectedValue {
+		t.Errorf("got: %s, want: %s.", ups.TrackingNumber, expectedValue)
 	}
 }
 
 func TestUPSPackageIsValid(t *testing.T) {
-	result, _ := kargo.Identify("1Z999AA10123456784")
-	if result.IsValid != true {
-		t.Errorf("Result is wrong, got: %t, want: %t.", result.IsValid, true)
+	p, _ := kargo.NewPackage("1Z999AA10123456784")
+	ups := kargo.NewUPS(p)
+	ups.Validate()
+	if ups.Package.IsValid != true {
+		t.Errorf("got: %t, want: %t.", ups.Package.IsValid, true)
+	}
+}
+func TestUPSValidateZeroChecksum(t *testing.T) {
+	p, _ := kargo.NewPackage("1Z999AA10123456784")
+	ups := kargo.NewUPS(p)
+	ups.Validate()
+	if ups.Package.IsValid != true {
+		t.Errorf("got: %t, want: %t.", ups.Package.IsValid, true)
 	}
 }
