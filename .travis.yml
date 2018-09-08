@@ -1,12 +1,15 @@
 language: go
 
 go:
+  - 1.8.x
   - 1.9.x
-  - 1.x
-  
-# Only clone the most recent commit.
-git:
-  depth: 1
-  
+  - tip
+sudo: false
+
+before_install:
+  - go get github.com/axw/gocov/gocov
+  - go get github.com/mattn/goveralls
+  - if ! go get github.com/golang/tools/cmd/cover; then go get golang.org/x/tools/cmd/cover; fi
+
 script:
-  - go test -v -race ./...  # Run all the tests with the race detector enabled
+  - $HOME/gopath/bin/goveralls -service=travis-ci
