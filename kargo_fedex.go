@@ -7,10 +7,12 @@ import (
 	"github.com/golang/example/stringutil"
 )
 
+// FedExGround96 defines a struct for Fedex Ground packages
 type FedExGround96 struct {
 	*Package
 }
 
+// FedExExpress defines a struct for Fedex Express packages
 type FedExExpress struct {
 	*Package
 }
@@ -32,11 +34,50 @@ func (f *FedExGround96) GetPackage() *Package {
 	return f.Package
 }
 
+// formatTrackingNumber formats the fedex barcode tracking number to
+// normal tracking number
+func (f *FedExGround96) formatTrackingNumber() {
+	f.Package.TrackingNumber = f.Package.TrackingNumber[7:]
+}
+
 // Validate Implements the CarrierFactory interface method
 // Checks whether is a package belongs to that carrier
 func (f *FedExGround96) Validate() bool {
-	//p.Carrier = "Fedex"
-	return false
+
+	f.formatTrackingNumber()
+	chars := f.Package.TrackingNumber[:len(f.Package.TrackingNumber)-1]
+	checkDigit, err := strconv.Atoi(f.Package.TrackingNumber[len(f.Package.TrackingNumber)-1:])
+	if err != nil {
+		return false
+	}
+
+	odd, even := 0, 0
+	reversed := stringutil.Reverse(chars)
+	for i, char := range reversed {
+		t := (string(char))
+		num, err := strconv.Atoi(t)
+		if err != nil {
+			return false
+		}
+
+		if i%2 == 0 {
+			even += num
+			continue
+		}
+		odd += num
+	}
+	check := ((even * 3) + odd) % 10
+	if check != 0 {
+		check = 10 - check
+	}
+
+	if check != checkDigit {
+		return false
+	}
+
+	f.Package.Carrier = f.GetCarrierName()
+	f.Package.IsValid = true
+	return true
 }
 
 // NewFedExExpress initializes a new FedExExpress struct with package value
@@ -56,9 +97,11 @@ func (f *FedExExpress) GetPackage() *Package {
 	return f.Package
 }
 
+// formatTrackingNumber formats the fedex barcode tracking number to
+// normal tracking number
 func (f *FedExExpress) formatTrackingNumber() {
 	left := strings.TrimLeft(f.Package.TrackingNumber[20:22], "0")
-	right := f.Package.TrackingNumber[22:len(f.Package.TrackingNumber)]
+	right := f.Package.TrackingNumber[22:]
 	f.Package.TrackingNumber = left + right
 }
 
@@ -67,8 +110,11 @@ func (f *FedExExpress) formatTrackingNumber() {
 func (f *FedExExpress) Validate() bool {
 
 	f.formatTrackingNumber()
-	chars, checkDigit := f.Package.TrackingNumber[:len(f.Package.TrackingNumber)-1],
-		f.Package.TrackingNumber[len(f.Package.TrackingNumber)-1:]
+	chars := f.Package.TrackingNumber[:len(f.Package.TrackingNumber)-1]
+	checkDigit, err := strconv.Atoi(f.Package.TrackingNumber[len(f.Package.TrackingNumber)-1:])
+	if err != nil {
+		return false
+	}
 
 	total := 0
 	factors := [3]int{1, 3, 7}
@@ -82,12 +128,7 @@ func (f *FedExExpress) Validate() bool {
 		total += num * factors[i%3]
 	}
 
-	numCheckDigit, err := strconv.Atoi(string(checkDigit))
-	if err != nil {
-		return false
-	}
-
-	if total%11%10 != numCheckDigit {
+	if total%11%10 != checkDigit {
 		return false
 	}
 
