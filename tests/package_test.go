@@ -7,7 +7,6 @@ import (
 
 func TestPackageTrackingNumber(t *testing.T) {
 	expectedValue := "someTrackingNumber"
-
 	p, _ := kargo.NewPackage(expectedValue)
 	if p.TrackingNumber != expectedValue {
 		t.Errorf("Failed, expected: %v, got: %v.", expectedValue, p.TrackingNumber)
