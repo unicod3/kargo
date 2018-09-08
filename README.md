@@ -56,6 +56,12 @@ You can run tests with standard test tool of Go:
 go test -v 
 ```
 
+## Changelog
+
+Version 1.0.0
+   * Initial release
+
+
 ## License
 
 GNU General Public License v3.0 - see [LICENSE.md](LICENCE.md) for more details
