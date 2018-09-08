@@ -4,8 +4,6 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-
-	"github.com/golang/example/stringutil"
 )
 
 // FedExGround96 defines a struct for Fedex Ground packages
@@ -63,7 +61,7 @@ func (f *FedExGround96) Validate() bool {
 	}
 
 	odd, even := 0, 0
-	reversed := stringutil.Reverse(chars)
+	reversed := Reverse(chars)
 	for i, char := range reversed {
 		t := (string(char))
 		num, err := strconv.Atoi(t)
@@ -139,7 +137,7 @@ func (f *FedExExpress) Validate() bool {
 
 	total := 0
 	factors := [3]int{1, 3, 7}
-	reversed := stringutil.Reverse(chars)
+	reversed := Reverse(chars)
 	for i, char := range reversed {
 
 		num, err := strconv.Atoi(string(char))
