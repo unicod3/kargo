@@ -67,4 +67,4 @@ Version 1.0.0
 
 ## License
 
-GNU General Public License v3.0 - see [LICENSE.md](LICENCE.md) for more details
+GNU General Public License v3.0 - see [LICENSE](LICENSE) for more details
