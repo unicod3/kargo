@@ -8,5 +8,5 @@ go:
 git:
   depth: 1
   
- script:
+script:
   - go test -v -race ./...  # Run all the tests with the race detector enabled
