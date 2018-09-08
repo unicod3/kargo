@@ -1,6 +1,7 @@
 package kargo
 
 import (
+	"regexp"
 	"strconv"
 )
 
@@ -9,14 +10,25 @@ type UPS struct {
 	*Package
 }
 
-// GetCarrierName retuns the name of carrier struct with package value
+// NewUPS initialize a new UPS struct with package value
+func NewUPS(p *Package) *UPS {
+	return &UPS{Package: p}
+}
+
+// GetCarrierName Implements the CarrierFactory interface method
+// Retuns the name of carrier struct with package value
 func (u *UPS) GetCarrierName() string {
 	return "UPS"
 }
 
-// NewUPS initialize a new UPS struct with package value
-func NewUPS(p *Package) *UPS {
-	return &UPS{Package: p}
+// Match Implements the CarrierFactory interface method
+// Retuns the name of carrier struct with package value
+func (u *UPS) Match() bool {
+	if m, _ := regexp.MatchString(`^1Z[A-Z0-9]{16}$`, u.Package.TrackingNumber); m == false {
+		return false
+	}
+	u.Package.Carrier = u.GetCarrierName()
+	return true
 }
 
 // GetPackage Implements the CarrierFactory interface method

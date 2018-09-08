@@ -10,6 +10,7 @@ import (
 type CarrierFactory interface {
 	GetCarrierName() string
 	GetPackage() *Package
+	Match() bool
 	Validate() bool
 }
 
@@ -27,7 +28,7 @@ func NewPackage(trackingNumber string) (*Package, error) {
 	}
 	t := strings.TrimSpace(stripSpaces(trackingNumber))
 
-	return &Package{TrackingNumber: t, IsValid: false}, nil
+	return &Package{TrackingNumber: t, Carrier: "Unknown", IsValid: false}, nil
 }
 
 //stripSpaces removes spaces from given string

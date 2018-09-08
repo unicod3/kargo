@@ -10,9 +10,13 @@ func Identify(trackingNumber string) (*Package, error) {
 
 	carriers := []CarrierFactory{NewUPS(p), NewFedExGround96(p), NewFedExExpress(p)}
 	for _, carrier := range carriers {
-		if carrier.Validate() {
-			return carrier.GetPackage(), nil
+		if !carrier.Match() {
+			continue
 		}
+		if !carrier.Validate() {
+			continue
+		}
+		return carrier.GetPackage(), nil
 	}
 	return p, nil
 }

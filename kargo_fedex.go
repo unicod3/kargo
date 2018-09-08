@@ -1,6 +1,7 @@
 package kargo
 
 import (
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -26,6 +27,16 @@ func NewFedExGround96(p *Package) *FedExGround96 {
 // Retuns the name of carrier
 func (f *FedExGround96) GetCarrierName() string {
 	return "FedEx"
+}
+
+// Match Implements the CarrierFactory interface method
+// Retuns the name of carrier struct with package value
+func (f *FedExGround96) Match() bool {
+	if m, _ := regexp.MatchString(`^96\d{20}$`, f.Package.TrackingNumber); m == false {
+		return false
+	}
+	f.Package.Carrier = f.GetCarrierName()
+	return true
 }
 
 // GetPackage Implements the CarrierFactory interface method
@@ -89,6 +100,16 @@ func NewFedExExpress(p *Package) *FedExExpress {
 // Retuns the name of carrier
 func (f *FedExExpress) GetCarrierName() string {
 	return "FedEx"
+}
+
+// Match Implements the CarrierFactory interface method
+// Retuns the name of carrier struct with package value
+func (f *FedExExpress) Match() bool {
+	if m, _ := regexp.MatchString(`^\d{34}$`, f.Package.TrackingNumber); m == false {
+		return false
+	}
+	f.Package.Carrier = f.GetCarrierName()
+	return true
 }
 
 // GetPackage Implements the CarrierFactory interface method
