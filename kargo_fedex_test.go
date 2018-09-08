@@ -21,6 +21,24 @@ func TestFedExExpressPackageWithNonValidNumber(t *testing.T) {
 	}
 }
 
+func TestFedExExpressPackageStringDigit(t *testing.T) {
+	p, _ := NewPackage("96320019600000000004001521s2152151")
+	fexpress := NewFedExExpress(p)
+	fexpress.Validate()
+	if fexpress.Package.IsValid != false {
+		t.Errorf("Failed, expected: %t, got: %t.", true, fexpress.Package.IsValid)
+	}
+}
+
+func TestFedExExpressPackageStringCheckDigit(t *testing.T) {
+	p, _ := NewPackage("963200196000000000040015215215215s")
+	fexpress := NewFedExExpress(p)
+	fexpress.Validate()
+	if fexpress.Package.IsValid != false {
+		t.Errorf("Failed, expected: %t, got: %t.", true, fexpress.Package.IsValid)
+	}
+}
+
 func TestFedExExpressPackageIsValid(t *testing.T) {
 	p, _ := NewPackage("9632001960000000000400152152152158")
 	fexpress := NewFedExExpress(p)
@@ -63,6 +81,24 @@ func TestFedExGround96PackageWithNonValidNumber(t *testing.T) {
 	fground.Validate()
 	if fground.Package.IsValid != false {
 		t.Errorf("Failed, expected: %t, got: %t.", false, fground.Package.IsValid)
+	}
+}
+
+func TestFedExGround96PackageStringDigit(t *testing.T) {
+	p, _ := NewPackage("96110190123456s2345671")
+	fground := NewFedExGround96(p)
+	fground.Validate()
+	if fground.Package.IsValid != false {
+		t.Errorf("Failed, expected: %t, got: %t.", true, fground.Package.IsValid)
+	}
+}
+
+func TestFedExGround96PackageStringCheckDigit(t *testing.T) {
+	p, _ := NewPackage("961101901234561234567s")
+	fground := NewFedExGround96(p)
+	fground.Validate()
+	if fground.Package.IsValid != false {
+		t.Errorf("Failed, expected: %t, got: %t.", true, fground.Package.IsValid)
 	}
 }
 

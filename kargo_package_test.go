@@ -13,9 +13,9 @@ func TestPackageTrackingNumber(t *testing.T) {
 }
 
 func TestPackageTrackingNumberWithSpaces(t *testing.T) {
-	expectedValue := "1Z999AA10123456784"
+	expectedValue := "someTrackingNumber"
 
-	p, _ := NewPackage("  1Z9  99AA1012  345678 4")
+	p, _ := NewPackage("  some Tracking Number")
 
 	if p.TrackingNumber != expectedValue {
 		t.Errorf("Failed, expected: %v, got: %v.", expectedValue, p.TrackingNumber)
