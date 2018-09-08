@@ -58,6 +58,9 @@ go test -v
 
 ## Changelog
 
+Version 1.0.1
+   * Fix stringutils package dependency issue
+
 Version 1.0.0
    * Initial release
 
