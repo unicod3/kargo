@@ -23,12 +23,13 @@ type Package struct {
 
 // NewPackage initializes a new Package struct with a Tracking Number value
 func NewPackage(trackingNumber string) (*Package, error) {
+	p := &Package{TrackingNumber: "", Carrier: "Unknown", IsValid: false}
 	if len(trackingNumber) == 0 {
-		return nil, errors.New("Tracking Number can not be empty!")
+		return p, errors.New("Tracking Number can not be empty!")
 	}
 	t := strings.TrimSpace(stripSpaces(trackingNumber))
-
-	return &Package{TrackingNumber: t, Carrier: "Unknown", IsValid: false}, nil
+	p.TrackingNumber = t
+	return p, nil
 }
 
 //stripSpaces removes spaces from given string

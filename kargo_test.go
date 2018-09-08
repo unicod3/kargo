@@ -31,6 +31,15 @@ func TestKargoIdentifyUPSTrackingNumber(t *testing.T) {
 	}
 }
 
+func TestKargoIdentifyReachPackageWithEmptyTrackingNumber(t *testing.T) {
+	expected := "Unknown"
+	pkg, err := Identify("")
+
+	if pkg.Carrier != expected && err != nil {
+		t.Errorf("Failed, expected: %v, want: %v.", expected, pkg.Carrier)
+	}
+}
+
 func TestKargoIdentifyUnknownCarrier(t *testing.T) {
 	expected := "Unknown"
 	pkg, _ := Identify("WrongTrackingNumber")

@@ -5,7 +5,7 @@ package kargo
 func Identify(trackingNumber string) (*Package, error) {
 	p, err := NewPackage(trackingNumber)
 	if err != nil {
-		return nil, err
+		return p, err
 	}
 
 	carriers := []CarrierFactory{NewUPS(p), NewFedExGround96(p), NewFedExExpress(p)}
