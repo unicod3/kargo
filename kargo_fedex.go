@@ -1,5 +1,12 @@
 package kargo
 
+import (
+	"strconv"
+	"strings"
+
+	"github.com/golang/example/stringutil"
+)
+
 type FedExGround96 struct {
 	*Package
 }
@@ -49,9 +56,42 @@ func (f *FedExExpress) GetPackage() *Package {
 	return f.Package
 }
 
+func (f *FedExExpress) formatTrackingNumber() {
+	left := strings.TrimLeft(f.Package.TrackingNumber[20:22], "0")
+	right := f.Package.TrackingNumber[22:len(f.Package.TrackingNumber)]
+	f.Package.TrackingNumber = left + right
+}
+
 // Validate Implements the CarrierFactory interface method
 // Checks whether is a package belongs to that carrier
 func (f *FedExExpress) Validate() bool {
-	f.Package.Carrier = "Fedex"
-	return false
+
+	f.formatTrackingNumber()
+	chars, checkDigit := f.Package.TrackingNumber[:len(f.Package.TrackingNumber)-1],
+		f.Package.TrackingNumber[len(f.Package.TrackingNumber)-1:]
+
+	total := 0
+	factors := [3]int{1, 3, 7}
+	reversed := stringutil.Reverse(chars)
+	for i, char := range reversed {
+
+		num, err := strconv.Atoi(string(char))
+		if err != nil {
+			return false
+		}
+		total += num * factors[i%3]
+	}
+
+	numCheckDigit, err := strconv.Atoi(string(checkDigit))
+	if err != nil {
+		return false
+	}
+
+	if total%11%10 != numCheckDigit {
+		return false
+	}
+
+	f.Package.Carrier = f.GetCarrierName()
+	f.Package.IsValid = true
+	return true
 }
