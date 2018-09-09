@@ -85,6 +85,9 @@ func (u *USPS) GetPackage() *Package {
 // Validate Implements the CarrierFactory interface method
 // Checks whether is a package belongs to that carrier
 func (u *USPS) Validate() bool {
+	if u.Match() == false {
+		return false
+	}
 	u.Package.Carrier = u.GetCarrierName()
 	u.Package.IsValid = true
 	return true
