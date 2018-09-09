@@ -61,8 +61,8 @@ func (u *USPS) Match() bool {
 	backValue := []string{"US"}
 
 	patternLong := "^(" + strings.Join(frontValueLong, "|") + ")[0-9]{17}$"
-	patternMediumWithTail := "^(" + strings.Join(frontValueMedium, "|") + ")[0-9]{9}(" + strings.Join(backValue, "|") + ")&"
-	patternShort := "^(" + strings.Join(frontValueShort, "|") + ")[0-9]{8}&"
+	patternMediumWithTail := "^(" + strings.Join(frontValueMedium, "|") + ")[0-9]{9}(" + strings.Join(backValue, "|") + ")$"
+	patternShort := "^(" + strings.Join(frontValueShort, "|") + ")[0-9]{8}$"
 
 	long, _ := regexp.MatchString(patternLong, u.Package.TrackingNumber)
 	medium, _ := regexp.MatchString(patternMediumWithTail, u.Package.TrackingNumber)
