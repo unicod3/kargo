@@ -55,7 +55,7 @@ func (u *USPS) Match() bool {
 
 	//NOTE: I'm sure there's other codes (like the tail 'US' out there for different Nations)
 	//So, I'm putting everything into the below slices so that it'll be easier to add later.
-	frontValueLong := []string{"94001", "92055", "93033", "92088", "92021", "92701"}
+	frontValueLong := []string{"94001", "94073", "92055", "93033", "92088", "92021", "92701"}
 	frontValueMedium := []string{"EA", "EC", "CP"}
 	frontValueShort := []string{"82"}
 	backValue := []string{"US"}
