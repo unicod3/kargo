@@ -2,7 +2,7 @@ package kargo
 
 import (
 	"regexp"
-	"strconv"
+	"strings"
 )
 
 // USPS is a carrier that have package struct
@@ -24,7 +24,52 @@ func (u *USPS) GetCarrierName() string {
 // Match Implements the CarrierFactory interface method
 // Retuns the name of carrier struct with package value
 func (u *USPS) Match() bool {
-	if m, _ := regexp.MatchString(`^1Z[A-Z0-9]{16}$`, u.Package.TrackingNumber); m == false {
+
+	//Regex to Match in this function
+	//Source: https://tools.usps.com/go/TrackConfirmAction_input
+	//### LONG
+	// USPS Tracking®						9400 1000 0000 0000 0000 00
+	//										94001 [0-9]{17}
+	// Priority Mail®						9205 5000 0000 0000 0000 00
+	//										92055 [0-9]{17}
+	// Certified Mail®						9407 3000 0000 0000 0000 00
+	//										94073 [0-9]{17}
+	// Collect On Delivery Hold For Pickup	9303 3000 0000 0000 0000 00
+	//										93033 [0-9]{17}
+	// Registered Mail™						9208 8000 0000 0000 0000 00
+	//										92088 [0-9]{17}
+	// Signature Confirmation™				9202 1000 0000 0000 0000 00
+	//										92021 [0-9]{17}
+	// Priority Mail Express®				9270 1000 0000 0000 0000 00
+	//										92701 [0-9]{17}
+	//### MEDIUM (With Tail)
+	// Priority Mail Express® (again)		EA 000 000 000 US
+	//										EA [0-9]{9} US
+	// Priority Mail Express International®	EC 000 000 000 US
+	//										EC [0-9]{9} US
+	// Priority Mail International®			CP 000 000 000 US
+	//										CP [0-9]{9} US
+	//### SHORT
+	// Global Express Guaranteed®			82 000 000 00
+	//										82 [0-9]{8}
+
+	//NOTE: I'm sure there's other codes like 'US' out there for different Nations
+	//So, I'm putting everything into the below slices so that it'll be easier to
+	//add later.
+	frontValueLong := []string{"94001", "92055", "93033", "92088", "92021", "92701"}
+	frontValueMedium := []string{"EA", "EC", "CP"}
+	frontValueShort := []string{"82"}
+	backValue := []string{"US"}
+
+	patternLong := "^(" + strings.Join(frontValueLong, "|") + ")[0-9]{17}$"
+	patternMediumWithTail := "^(" + strings.Join(frontValueMedium, "|") + ")[0-9]{9}(" + strings.Join(backValue, "|") + ")&"
+	patternShort := "^(" + strings.Join(frontValueShort, "|") + ")[0-9]{8}&"
+
+	long, _ := regexp.MatchString(patternLong, u.Package.TrackingNumber)
+	medium, _ := regexp.MatchString(patternMediumWithTail, u.Package.TrackingNumber)
+	short, _ := regexp.MatchString(patternShort, u.Package.TrackingNumber)
+
+	if long || medium || short == false {
 		return false
 	}
 	u.Package.Carrier = u.GetCarrierName()
@@ -40,39 +85,6 @@ func (u *USPS) GetPackage() *Package {
 // Validate Implements the CarrierFactory interface method
 // Checks whether is a package belongs to that carrier
 func (u *USPS) Validate() bool {
-	chars := u.Package.TrackingNumber[2 : len(u.Package.TrackingNumber)-1]
-	checkDigit, err := strconv.Atoi(u.Package.TrackingNumber[len(u.Package.TrackingNumber)-1:])
-	if err != nil {
-		return false
-	}
-
-	var odd, even int = 0, 0
-	for i, char := range chars {
-
-		t := (string(char))
-		num, err := strconv.Atoi(t)
-		if err != nil {
-			num = int(char-3) % 10
-		}
-
-		if i%2 == 0 {
-			even += num
-			continue
-		}
-
-		odd += num
-
-	}
-
-	check := ((odd * 2) + even) % 10
-	if check != 0 {
-		check = 10 - check
-	}
-
-	if check != checkDigit {
-		return false
-	}
-
 	u.Package.Carrier = u.GetCarrierName()
 	u.Package.IsValid = true
 	return true
