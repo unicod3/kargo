@@ -53,9 +53,8 @@ func (u *USPS) Match() bool {
 	// Global Express Guaranteed®			82 000 000 00
 	//										82 [0-9]{8}
 
-	//NOTE: I'm sure there's other codes like 'US' out there for different Nations
-	//So, I'm putting everything into the below slices so that it'll be easier to
-	//add later.
+	//NOTE: I'm sure there's other codes (like the tail 'US' out there for different Nations)
+	//So, I'm putting everything into the below slices so that it'll be easier to add later.
 	frontValueLong := []string{"94001", "92055", "93033", "92088", "92021", "92701"}
 	frontValueMedium := []string{"EA", "EC", "CP"}
 	frontValueShort := []string{"82"}
