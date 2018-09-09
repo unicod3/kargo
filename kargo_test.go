@@ -13,6 +13,15 @@ func TestKargoIdentifyFedExExpressTrackingNumber(t *testing.T) {
 	}
 }
 
+func TestKargoIdentifyUSPSTrackingNumber(t *testing.T) {
+	expected := "USPS"
+	pkg, _ := Identify("9400 1000 1337 3411 0000 00")
+
+	if pkg.Carrier != expected {
+		t.Errorf("Failed, expected: %v, want: %v.", expected, pkg.TrackingNumber)
+	}
+}
+
 func TestKargoIdentifyFedExGround96TrackingNumber(t *testing.T) {
 	expected := "FedEx"
 	pkg, _ := Identify("9611019012345612345640")
