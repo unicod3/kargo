@@ -69,7 +69,7 @@ func (u *USPS) Match() bool {
 	medium, _ := regexp.MatchString(patternMediumWithTail, u.Package.TrackingNumber)
 	short, _ := regexp.MatchString(patternShort, u.Package.TrackingNumber)
 
-	if long || medium || short == false {
+	if (long || medium || short) == false {
 		return false
 	}
 	u.Package.Carrier = u.GetCarrierName()
