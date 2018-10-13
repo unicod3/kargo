@@ -25,7 +25,7 @@ func TestUPSPackageValidate(t *testing.T) {
 		ups := NewUPS(p)
 		ups.Validate()
 		if ups.Package.IsValid != expected {
-			t.Errorf("Failed, expected: %t, have: %t.", expected, ups.Package.IsValid)
+			t.Errorf("Failed: %s, expected: %t, have: %t.", trackingNumber, expected, ups.Package.IsValid)
 		}
 	}
 }
