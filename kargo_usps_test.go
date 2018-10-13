@@ -38,6 +38,24 @@ func TestUSPSIMpbPackageWithNonValidNumber(t *testing.T) {
 	}
 }
 
+func TestUSPSIMpbPackageWithNonValidCharCheckDigit(t *testing.T) {
+	p, _ := NewPackage("420973179200920559276775601584255r")
+	usps := NewUSPSIMpb(p)
+	usps.Validate()
+	if usps.Package.IsValid != false {
+		t.Errorf("Failed, expected: %t, have: %t.", false, usps.Package.IsValid)
+	}
+}
+
+func TestUSPSIMpbPackageWithNonValidCheckDigit(t *testing.T) {
+	p, _ := NewPackage("4209731792009205592767756015842559")
+	usps := NewUSPSIMpb(p)
+	usps.Validate()
+	if usps.Package.IsValid != false {
+		t.Errorf("Failed, expected: %t, have: %t.", false, usps.Package.IsValid)
+	}
+}
+
 func TestUSPSIMpbPackageZeroCheckDigit(t *testing.T) {
 	p, _ := NewPackage("9212391234567812345670")
 	usps := NewUSPSIMpb(p)
@@ -67,6 +85,23 @@ func TestUSPSS10PackageMatch(t *testing.T) {
 	}
 }
 
+func TestUSPSS10PackageWithNonValidChar(t *testing.T) {
+	p, _ := NewPackage("EF12r456786US")
+	usps := NewUSPSS10(p)
+	usps.Validate()
+	if usps.Package.IsValid != false {
+		t.Errorf("Failed, expected: %t, have: %t.", false, usps.Package.IsValid)
+	}
+}
+
+func TestUSPSS10PackageWithNonValidCheckDigit(t *testing.T) {
+	p, _ := NewPackage("EF123456786US")
+	usps := NewUSPSS10(p)
+	usps.Validate()
+	if usps.Package.IsValid != false {
+		t.Errorf("Failed, expected: %t, have: %t.", false, usps.Package.IsValid)
+	}
+}
 func TestUSPSS10PackageWithNonValidNumber(t *testing.T) {
 	p, _ := NewPackage("EF12345678US") // 8 digit
 	usps := NewUSPSS10(p)
@@ -120,6 +155,14 @@ func TestUSPS20PackageWithNonValidNumber(t *testing.T) {
 	}
 }
 
+func TestUSPS20PackageWithNonValidChar(t *testing.T) {
+	p, _ := NewPackage("71123456r89123456787")
+	usps := NewUSPS20(p)
+	usps.Validate()
+	if usps.Package.IsValid != false {
+		t.Errorf("Failed, expected: %t, have: %t.", true, usps.Package.IsValid)
+	}
+}
 func TestUSPS20PackageWrongCheckDigit(t *testing.T) {
 	p, _ := NewPackage("7112345678912345678r")
 	usps := NewUSPS20(p)

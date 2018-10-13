@@ -13,9 +13,27 @@ func TestKargoIdentifyFedExExpressTrackingNumber(t *testing.T) {
 	}
 }
 
-func TestKargoIdentifyUSPSTrackingNumber(t *testing.T) {
+func TestKargoIdentifyUSPSIMpbTrackingNumber(t *testing.T) {
 	expected := "USPS"
-	pkg, _ := Identify("9400 1000 1337 3411 0000 00")
+	pkg, _ := Identify("420221539101026837331000039521")
+
+	if pkg.Carrier != expected {
+		t.Errorf("Failed, expected: %v, want: %v.", expected, pkg.TrackingNumber)
+	}
+}
+
+func TestKargoIdentifyUSPSS10TrackingNumber(t *testing.T) {
+	expected := "USPS"
+	pkg, _ := Identify("EF123456785US")
+
+	if pkg.Carrier != expected {
+		t.Errorf("Failed, expected: %v, want: %v.", expected, pkg.TrackingNumber)
+	}
+}
+
+func TestKargoIdentifyUSPS20TrackingNumber(t *testing.T) {
+	expected := "USPS"
+	pkg, _ := Identify("71123456789123456787")
 
 	if pkg.Carrier != expected {
 		t.Errorf("Failed, expected: %v, want: %v.", expected, pkg.TrackingNumber)
