@@ -7,9 +7,11 @@ Package supports
 - [x] UPS
 - [x] FedEx Express
 - [x] FedEx Ground "96"
+- [x] USPS IMpb
+- [x] USPS UPU S10
+- [x] USPS 20
 
 But more on the way
-- [ ] USPS
 - [ ] DHL
 
 ## Install
@@ -57,6 +59,11 @@ go test -v
 ```
 
 ## Changelog
+
+Version 1.1.2
+   * Added support for USPS; IMpb, UPU S10, 20 character barcodes
+   * Removed the unnecessary prefix from filenames
+   * Improved the tests
 
 Version 1.0.1
    * Fix stringutils package dependency issue
