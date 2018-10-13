@@ -4,67 +4,25 @@ import (
 	"testing"
 )
 
-func TestKargoIdentifyFedExExpressTrackingNumber(t *testing.T) {
-	expected := "FedEx"
-	pkg, _ := Identify("9632001960000000000400152152152158")
-
-	if pkg.Carrier != expected {
-		t.Errorf("Failed, expected: %v, want: %v.", expected, pkg.TrackingNumber)
+func TestIdentify(t *testing.T) {
+	trackingNumbers := map[string]string{
+		"1Z999AA10123456784":                 "UPS",   // UPS
+		"9632001960000000000400152152152158": "FedEx", // FedexExpress
+		"9611019012345612345640":             "FedEx", // FedexGround96
+		"420221539101026837331000039521":     "USPS",  // USPSIMpb
+		"EF123456785US":                      "USPS",  // USPSS10
+		"71123456789123456787":               "USPS",  // USPS20
+		"":            "Unknown", // Unknown: Empty Tracking Number
+		"bla bla bla": "Unknown", // Unknown: Some other value
 	}
-}
 
-func TestKargoIdentifyUSPSTrackingNumber(t *testing.T) {
-	expected := "USPS"
-	pkg, _ := Identify("9400 1000 1337 3411 0000 00")
-
-	if pkg.Carrier != expected {
-		t.Errorf("Failed, expected: %v, want: %v.", expected, pkg.TrackingNumber)
+	for trackingNumber, carrier := range trackingNumbers {
+		pkg, _ := Identify(trackingNumber)
+		if pkg.Carrier != carrier {
+			t.Errorf("Failed, expected: %v, got: %v.", carrier, pkg.TrackingNumber)
+		}
 	}
-}
 
-func TestKargoIdentifyFedExGround96TrackingNumber(t *testing.T) {
-	expected := "FedEx"
-	pkg, _ := Identify("9611019012345612345640")
-
-	if pkg.Carrier != expected {
-		t.Errorf("Failed, expected: %v, want: %v.", expected, pkg.TrackingNumber)
-	}
-}
-
-func TestKargoIdentifyUPSTrackingNumber(t *testing.T) {
-	expected := "UPS"
-	pkg, _ := Identify("1Z999AA10123456784")
-
-	if pkg.Carrier != expected {
-		t.Errorf("Failed, expected: %v, want: %v.", expected, pkg.TrackingNumber)
-	}
-}
-
-func TestKargoIdentifyCarrier(t *testing.T) {
-	expected := "UPS"
-	pkg, _ := Identify("1Z999AA10123456784")
-
-	if pkg.Carrier != expected {
-		t.Errorf("Failed, expected: %v, want: %v.", expected, pkg.TrackingNumber)
-	}
-}
-
-func TestKargoIdentifyReachPackageWithEmptyTrackingNumber(t *testing.T) {
-	expected := "Unknown"
-	pkg, err := Identify("")
-
-	if pkg.Carrier != expected && err != nil {
-		t.Errorf("Failed, expected: %v, want: %v.", expected, pkg.Carrier)
-	}
-}
-
-func TestKargoIdentifyUnknownCarrier(t *testing.T) {
-	expected := "Unknown"
-	pkg, _ := Identify("WrongTrackingNumber")
-
-	if pkg.Carrier != expected {
-		t.Errorf("Failed, expected: %v, want: %v.", expected, pkg.TrackingNumber)
-	}
 }
 
 func TestKargoIdentifyNotValid(t *testing.T) {
@@ -72,24 +30,6 @@ func TestKargoIdentifyNotValid(t *testing.T) {
 	pkg, _ := Identify("1Z399AA10123456784")
 
 	if pkg.IsValid != expected {
-		t.Errorf("Failed, expected: %v, want: %v.", expected, pkg.TrackingNumber)
-	}
-}
-
-func TestKargoIdentifyValid(t *testing.T) {
-	expected := true
-	pkg, _ := Identify("1Z999AA10123456784")
-
-	if pkg.IsValid != expected {
-		t.Errorf("Failed, expected: %v, want: %v.", expected, pkg.TrackingNumber)
-	}
-}
-
-func TestKargoIdentifyEmptyTracking(t *testing.T) {
-	expected := "Tracking Number can not be empty!"
-	pkg, err := Identify("")
-
-	if err == nil {
-		t.Errorf("Failed, expected: %v, want: %v.", expected, pkg.TrackingNumber)
+		t.Errorf("Failed, expected: %v, got: %v.", expected, pkg.TrackingNumber)
 	}
 }
