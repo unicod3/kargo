@@ -8,7 +8,14 @@ func Identify(trackingNumber string) (*Package, error) {
 		return p, err
 	}
 
-	carriers := []CarrierFactory{NewUPS(p), NewFedExGround96(p), NewFedExExpress(p), NewUSPS(p)}
+	carriers := []CarrierFactory{
+		NewUPS(p),
+		NewFedExGround96(p),
+		NewFedExExpress(p),
+		NewUSPSIMpb(p),
+		NewUSPSS10(p),
+		NewUSPS20(p),
+	}
 	for _, carrier := range carriers {
 		if !carrier.Match() {
 			continue
